@@ -43,7 +43,7 @@ GIT_TOKEN = getenv(
 )  # Fill this variable if your upstream repository is private
 
 SUPPORT_CHANNEL = getenv("SUPPORT_CHAT", "https://t.me/MusiclineTechTeam")
-SUPPORT_GROUP = getenv("SUPPORT_GROUP", "https://t.me/MusiclineTechTeam")
+SUPPORT_GROUP = getenv("SUPPORT_GROUP", "https://t.me/Mahadev_Updates")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
@@ -84,10 +84,10 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://i.ibb.co/SDB68PDg/Img2url-bot.jpg"
+    "START_IMG_URL", "https://ibb.co/WWkKx89c"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://i.ibb.co/SDB68PDg/Img2url-bot.jpg"
+    "PING_IMG_URL", "https://ibb.co/zVgT2N6P"
 )
 PLAYLIST_IMG_URL = "https://graph.org//file/3dfcffd0c218ead96b102.png"
 STATS_IMG_URL = "https://files.catbox.moe/fobxgt.jpg"
