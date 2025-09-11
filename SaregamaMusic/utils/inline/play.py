@@ -62,7 +62,7 @@ def stream_markup_timer(_, chat_id, played, dur):
         ],
         [
             InlineKeyboardButton(text="ᴜᴘᴅᴀᴛᴇ 📢", url="https://t.me/MusiclineTechTeam"),
-            InlineKeyboardButton(text="ꜱᴜᴘᴘᴏʀᴛ 💬", url="https://t.me/MusiclineTechTeam"),
+            InlineKeyboardButton(text="ꜱᴜᴘᴘᴏʀᴛ 💬", url="https://t.me/Mahadev_Updates"),
         ],
            [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
     ]
@@ -80,7 +80,7 @@ def stream_markup(_, chat_id):
         ],
         [
             InlineKeyboardButton(text="ᴜᴘᴅᴀᴛᴇ 📢", url="https://t.me/MusiclineTechTeam"),
-            InlineKeyboardButton(text="ᴜᴘᴅᴀᴛᴇ 📢", url="https://t.me/MusiclineTechTeam"),
+            InlineKeyboardButton(text="ᴜᴘᴅᴀᴛᴇ 📢", url="https://t.me/Mahadev_Updates"),
         ],
            [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
     ]
