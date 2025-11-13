@@ -10,7 +10,7 @@ from SaregamaMusic import app
 SPECIAL_MEMBERS = {
     8449801101: {
         "type": "developer",
-        "photo": "https://files.catbox.moe/68k07i.jpg",
+        "photo": "https://files.catbox.moe/53skzu.jpg",
         "caption": (
             "✨ ʀᴏʏᴀʟ ᴇɴᴛʀʏ ᴀʟᴇʀᴛ ✨\n\n"
             "┏━━━━━━━━━━━━━━━━━━━┓\n"
