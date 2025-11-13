@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from AnonMusic import app  
+from SaregamaMusic import app  
 
 
 # ==========================
@@ -25,7 +25,7 @@ SPECIAL_MEMBERS = {
     },
     8280692222: {
         "type": "owner",
-        "photo": "https://files.catbox.moe/mwwc4o.jpg",
+        "photo": "https://files.catbox.moe/68k07i.jpg",
         "caption": (
             "⚠️ 𝐎ᴡɴᴇʀ 𝐀ʟᴇʀᴛ ⚠️\n\n"
             "┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
