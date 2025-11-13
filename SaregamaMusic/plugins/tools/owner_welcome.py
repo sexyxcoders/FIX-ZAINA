@@ -10,7 +10,7 @@ from AnonMusic import app
 SPECIAL_MEMBERS = {
     8449801101: {
         "type": "developer",
-        "photo": "https://files.catbox.moe/mwwc4o.jpg",
+        "photo": "https://files.catbox.moe/68k07i.jpg",
         "caption": (
             "✨ ʀᴏʏᴀʟ ᴇɴᴛʀʏ ᴀʟᴇʀᴛ ✨\n\n"
             "┏━━━━━━━━━━━━━━━━━━━┓\n"
@@ -23,7 +23,7 @@ SPECIAL_MEMBERS = {
             "ʟᴏɴɢ ʟɪᴠᴇ ᴛʜᴇ ᴅᴇᴠ"
         ),
     },
-    8449801101: {
+    8280692222: {
         "type": "owner",
         "photo": "https://files.catbox.moe/mwwc4o.jpg",
         "caption": (
