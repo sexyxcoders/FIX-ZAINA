@@ -8,13 +8,13 @@ import yt_dlp
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
-from AnonMusic.utils.database import is_on_off
-from AnonMusic import app
-from AnonMusic.utils.formatters import time_to_seconds
+from SaregamaMusic.utils.database import is_on_off
+from SaregamaMusic import app
+from SaregamaMusic.utils.formatters import time_to_seconds
 import random
 import logging
 import aiohttp
-from AnonMusic import LOGGER
+from SaregamaMusic import LOGGER
 from urllib.parse import urlparse
 from config import API_URL, VIDEO_API_URL, API_KEY
 
