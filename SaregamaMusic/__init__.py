@@ -1,35 +1,21 @@
-# ==========================
-# SAFE EVENT LOOP INITIALIZATION (Fix for Heroku)
-# ==========================
 import asyncio
+import uvloop
 
-try:
-    import uvloop
-    uvloop.install()
-except ImportError:
-    pass
-
-# Ensure there's always an active asyncio loop in the main thread
+# Ensure there's a running event loop before importing Pyrogram
 try:
     asyncio.get_running_loop()
 except RuntimeError:
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     asyncio.set_event_loop(asyncio.new_event_loop())
 
-
-# ==========================
-# EXISTING PROJECT IMPORTS
-# ==========================
+# Now safe to import Pyrogram and your bot
 from SaregamaMusic.core.bot import AMBOTOP
 from SaregamaMusic.core.dir import dirr
 from SaregamaMusic.core.git import git
 from SaregamaMusic.core.userbot import Userbot
 from SaregamaMusic.misc import dbb, heroku
-
 from .logging import LOGGER
 
-# ==========================
-# CORE INITIALIZATION
-# ==========================
 dirr()
 git()
 dbb()
@@ -38,9 +24,6 @@ heroku()
 app = AMBOTOP()
 userbot = Userbot()
 
-# ==========================
-# PLATFORM API IMPORTS
-# ==========================
 from .platforms import *
 
 Apple = AppleAPI()
