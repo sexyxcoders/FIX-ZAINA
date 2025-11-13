@@ -1,4 +1,5 @@
 import time
+import asyncio
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
@@ -26,31 +27,44 @@ from strings import get_string
 from SaregamaMusic.misc import SUDOERS
 
 
+# ==========================
+# Private /start handler
+# ==========================
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
+
+    # Check if start has arguments
     if len(message.text.split()) > 1:
-        name = message.text.split(None, 1)[1]
-        if name[0:4] == "help":
+        arg = message.text.split(None, 1)[1]
+
+        # Help panel
+        if arg.startswith("help"):
             keyboard = help_pannel(_)
             return await message.reply_photo(
                 photo=config.START_IMG_URL,
                 caption=_["help_1"].format(config.SUPPORT_GROUP),
                 protect_content=True,
                 reply_markup=keyboard,
+                has_spoiler=True  # Spoiler effect
             )
-        if name[0:3] == "sud":
+
+        # Sudoers list
+        elif arg.startswith("sud"):
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOG_GROUP_ID,
-                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+                    text=f"{message.from_user.mention} just started the bot to check <b>sudolist</b>.\n\n"
+                         f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                         f"<b>Username:</b> @{message.from_user.username}"
                 )
-            return
-        if name[0:3] == "inf":
+
+        # YouTube info
+        elif arg.startswith("inf"):
             m = await message.reply_text("🔎")
-            query = (str(name)).replace("info_", "", 1)
+            query = arg.replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
             for result in (await results.next())["result"]:
@@ -62,15 +76,14 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
+
             searched_text = _["start_6"].format(
                 title, duration, views, published, channellink, channel, app.mention
             )
             key = InlineKeyboardMarkup(
                 [
-                    [
-                        InlineKeyboardButton(text=_["S_B_8"], url=link),
-                        InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_GROUP),
-                    ],
+                    [InlineKeyboardButton(text=_["S_B_8"], url=link),
+                     InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_GROUP)],
                 ]
             )
             await m.delete()
@@ -78,13 +91,17 @@ async def start_pm(client, message: Message, _):
                 chat_id=message.chat.id,
                 photo=thumbnail,
                 caption=searched_text,
-                reply_markup=key,
+                reply_markup=key
             )
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOG_GROUP_ID,
-                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+                    text=f"{message.from_user.mention} just checked <b>track info</b>.\n\n"
+                         f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                         f"<b>Username:</b> @{message.from_user.username}"
                 )
+
+    # Default private start
     else:
         out = private_panel(_)
         UP, CPU, RAM, DISK = await bot_sys_stats()
@@ -92,14 +109,20 @@ async def start_pm(client, message: Message, _):
             photo=config.START_IMG_URL,
             caption=_["start_2"].format(message.from_user.mention, app.mention, UP, DISK, CPU, RAM),
             reply_markup=InlineKeyboardMarkup(out),
+            has_spoiler=True  # Spoiler effect
         )
         if await is_on_off(2):
-            return await app.send_message(
+            await app.send_message(
                 chat_id=config.LOG_GROUP_ID,
-                text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+                text=f"{message.from_user.mention} just started the bot.\n\n"
+                     f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                     f"<b>Username:</b> @{message.from_user.username}"
             )
 
 
+# ==========================
+# Group /start handler
+# ==========================
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
@@ -109,81 +132,85 @@ async def start_gp(client, message: Message, _):
         photo=config.START_IMG_URL,
         caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
         reply_markup=InlineKeyboardMarkup(out),
+        has_spoiler=True  # Spoiler effect
     )
-    return await add_served_chat(message.chat.id)
+    await add_served_chat(message.chat.id)
 
 
+# ==========================
+# Welcome new chat members
+# ==========================
 welcome_group = 2
 @app.on_message(filters.new_chat_members, group=welcome_group)
-async def welcome(client, message: Message):
+async def welcome_special(client, message: Message):
     try:
         chat_id = message.chat.id
         for member in message.new_chat_members:
-            buttons = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=member.first_name,  
-                            user_id=member.id        
-                        )
-                    ]
-                ]
-            )
+            # Buttons for member
+            buttons = InlineKeyboardMarkup([[InlineKeyboardButton(text=member.first_name, user_id=member.id)]])
 
-            if isinstance(config.OWNER_ID, int): 
+            # OWNER check
+            if isinstance(config.OWNER_ID, int):
                 if member.id == config.OWNER_ID:
-                    owner = f"#BOT_OWNER\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n{member.mention} 𝙊𝙬𝙣𝙚𝙧 𝗢𝗳 {app.mention} 𝙟𝙪𝙨𝙩 𝙟𝙤𝙞𝙣𝙚𝙙 𝙩𝙝𝙚 𝙜𝙧𝙤𝙪𝙥 <code>{message.chat.title}</code>.\n\n𝗦𝘂𝗽𝗽𝗼𝗿𝘁 𝗠𝗲 𝗛𝗲𝗿𝗲 👇🏻🤭💕\n\n┏━━━━━━━━━━━━┓\n┣★ 𝗨𝗽𝗱𝗮𝘁𝗲 -:@TncNetwork\n┣★ 𝗦𝘂𝗽𝗽𝗼𝗿𝘁 -: @TNCmeetups\n┣★ 𝗕𝗼𝘁 𝗨𝘀𝗲𝗿𝗡𝗮𝗺𝗲 -: @{app.username}\n┣★ 𝙉𝙤𝙩𝙚  -: 𝗧𝗵𝗶𝘀 𝗜𝘀 𝗢𝗻𝗹𝘆 𝗙𝗼𝗿 𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝗙𝗼𝗿 𝗠𝘆 𝗢𝘄𝗻𝗲𝗿 {member.mention}."
-                    sent_message = await message.reply_text(owner, reply_markup=buttons)
+                    owner_msg = f"#BOT_OWNER\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n{member.mention} Owner of {app.mention} just joined <code>{message.chat.title}</code>."
+                    sent = await message.reply_text(owner_msg, reply_markup=buttons)
                     await asyncio.sleep(180)
-                    await sent_message.delete()  
+                    await sent.delete()
                     return
 
-            elif isinstance(config.OWNER_ID, (list, set)): 
+            elif isinstance(config.OWNER_ID, (list, set)):
                 if member.id in config.OWNER_ID:
-                    owner = f"#BOT_OWNER\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n{member.mention} 𝙊𝙬𝙣𝙚𝙧 𝗢𝗳 {app.mention} 𝙟𝙪𝙨𝙩 𝙟𝙤𝙞𝙣𝙚𝙙 𝙩𝙝𝙚 𝙜𝙧𝙤𝙪𝙥 <code>{message.chat.title}</code>.\n\n𝗦𝘂𝗽𝗽𝗼𝗿𝘁 𝗠𝗲 𝗛𝗲𝗿𝗲 👇🏻🤭💕\n\n┏━━━━━━━━━━━━┓\n┣★ 𝗨𝗽𝗱𝗮𝘁𝗲 -: @TncNetwork\n┣★ 𝗦𝘂𝗽𝗽𝗼𝗿𝘁 -: @TNCmeetups\n┣★ 𝗕𝗼𝘁 𝗨𝘀𝗲𝗿𝗡𝗮𝗺𝗲 -: @{app.username}\n┣★ 𝙉𝙤𝙩𝙚  -: 𝗧𝗵𝗶𝘀 𝗜𝘀 𝗢𝗻𝗹𝘆 𝗙𝗼𝗿 𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝗙𝗼𝗿 𝗠𝘆 𝗢𝘄𝗻𝗲𝗿 {member.mention}."
-                    sent_message = await message.reply_text(owner, reply_markup=buttons)
-                    await asyncio.sleep(180) 
-                    await sent_message.delete()  
+                    owner_msg = f"#BOT_OWNER\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n{member.mention} Owner of {app.mention} just joined <code>{message.chat.title}</code>."
+                    sent = await message.reply_text(owner_msg, reply_markup=buttons)
+                    await asyncio.sleep(180)
+                    await sent.delete()
                     return
 
-            if isinstance(SUDOERS, int): 
+            # SUDOERS check
+            if isinstance(SUDOERS, int):
                 if member.id == SUDOERS:
-                    AMBOT = f"#Sudo_User\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n𝗢𝗙 {app.mention} 𝗦𝗨𝗗𝗢 𝗨𝗦𝗘𝗥 {member.mention} just joined the group <code>{message.chat.title}</code>.\n\n𝗦𝘂𝗽𝗽𝗼𝗿𝘁 𝗠𝗲 𝗛𝗲𝗿𝗲 👇🏻🤭💕\n\n┏━━━━━━━━━━━━┓\n┣★ 𝗨𝗽𝗱𝗮𝘁𝗲 -: @TncNetwork\n┣★ 𝗦𝘂𝗽𝗽𝗼𝗿𝘁 -: @TNCmeetups\n┣★ 𝗕𝗼𝘁 𝗨𝗦𝗘𝗥𝗡𝗔𝗠𝗘 -: @{app.username}."
-                    sent_message = await message.reply_text(AMBOT, reply_markup=buttons)
-                    await asyncio.sleep(180) 
-                    await sent_message.delete()  
+                    sudo_msg = f"#Sudo_User\n\n Welcome {member.mention} to {app.mention}!"
+                    sent = await message.reply_text(sudo_msg, reply_markup=buttons)
+                    await asyncio.sleep(180)
+                    await sent.delete()
                     return
 
             elif isinstance(SUDOERS, (list, set)):
                 if member.id in SUDOERS:
-                    AMBOT = f"#Sudo_User\n\n 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐁𝐎𝐒𝐒 💗\n\n𝗢𝗙 {app.mention} 𝗦𝗨𝗗𝗢 𝗨𝗦𝗘𝗥 {member.mention} just joined the group <code>{message.chat.title}</code>.\n\n𝗦𝘂𝗽𝗽𝗼𝗿𝘁 𝗠𝗲 𝗛𝗘𝗥𝗘 👇🏻🤭💕\n\n┏━━━━━━━━━━━━┓\n┣★ 𝗨𝗽𝗱𝗮𝘁𝗲 -: @RockyXUpdate\n┣★ 𝗦𝘂𝗽𝗽𝗼𝗿𝘁 -: @RockyXSupport\n┣★ 𝗕𝗢𝗧 𝗨𝗦𝗘𝗥𝗡𝗔𝗠𝗘 -: @{app.username}."
-                    sent_message = await message.reply_text(AMBOT, reply_markup=buttons)
-                    await asyncio.sleep(180) 
-                    await sent_message.delete()  
+                    sudo_msg = f"#Sudo_User\n\n Welcome {member.mention} to {app.mention}!"
+                    sent = await message.reply_text(sudo_msg, reply_markup=buttons)
+                    await asyncio.sleep(180)
+                    await sent.delete()
                     return
 
-        return
     except Exception as e:
         print(f"Error in welcome handler: {e}")
         return
 
 
-
+# ==========================
+# General welcome / blacklisted handling
+# ==========================
 @app.on_message(filters.new_chat_members, group=-1)
-async def welcome(client, message: Message):
+async def welcome_general(client, message: Message):
     for member in message.new_chat_members:
         try:
             language = await get_lang(message.chat.id)
             _ = get_string(language)
+
+            # Ban blacklisted users
             if await is_banned_user(member.id):
                 try:
                     await message.chat.ban_member(member.id)
                 except:
                     pass
+
+            # Bot self join
             if member.id == app.id:
                 if message.chat.type != ChatType.SUPERGROUP:
                     await message.reply_text(_["start_4"])
                     return await app.leave_chat(message.chat.id)
+
                 if message.chat.id in await blacklisted_chats():
                     await message.reply_text(
                         _["start_5"].format(
@@ -205,10 +232,10 @@ async def welcome(client, message: Message):
                         app.mention,
                     ),
                     reply_markup=InlineKeyboardMarkup(out),
+                    has_spoiler=True  # Spoiler effect
                 )
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
+
         except Exception as ex:
             print(ex)
-
-
